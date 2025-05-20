@@ -115,83 +115,61 @@
   </div>
 
   <script>
-  const partecipaBtn = document.getElementById('partecipaBtn');
-  const annullaBtn = document.getElementById('annullaBtn');
-  const counterEl = document.getElementById('counter');
-  const formContainer = document.getElementById('formContainer');
-  const timerEl = document.getElementById('timer');
-  const form = document.querySelector('#formContainer form');
+    const partecipaBtn = document.getElementById('partecipaBtn');
+    const annullaBtn = document.getElementById('annullaBtn');
+    const counterEl = document.getElementById('counter');
+    const formContainer = document.getElementById('formContainer');
+    const timerEl = document.getElementById('timer');
 
-  const maxPartecipanti = 50;
-  let partecipantiCount = parseInt(localStorage.getItem('partecipantiCount')) || 0;
-  counterEl.textContent = partecipantiCount;
+    let partecipantiCount = 0;
+    const maxPartecipanti = 50;
+    let totalSeconds = 300;
 
-  // Disabilita il pulsante se il numero massimo è raggiunto
-  if (partecipantiCount >= maxPartecipanti) {
-    partecipaBtn.disabled = true;
-  }
+    partecipaBtn.addEventListener('click', () => {
+      if (partecipantiCount >= maxPartecipanti) {
+        alert("Il numero massimo di partecipanti è stato raggiunto!");
+        return;
+      }
 
-  partecipaBtn.addEventListener('click', () => {
-    if (partecipantiCount >= maxPartecipanti) {
-      alert("Il numero massimo di partecipanti è stato raggiunto!");
-      return;
-    }
-    formContainer.style.display = 'block';
-  });
-
-  annullaBtn.addEventListener('click', () => {
-    if (partecipantiCount > 0) {
-      partecipantiCount--;
-      localStorage.setItem('partecipantiCount', partecipantiCount);
+      formContainer.style.display = 'block';
+      partecipantiCount++;
       counterEl.textContent = partecipantiCount;
-      alert("Hai annullato la tua partecipazione.");
-      formContainer.style.display = 'none';
-      partecipaBtn.disabled = false;
-    } else {
-      alert("Non ci sono iscritti da annullare.");
+
+      if (partecipantiCount >= maxPartecipanti) {
+        partecipaBtn.disabled = true;
+      }
+    });
+
+    annullaBtn.addEventListener('click', () => {
+      if (partecipantiCount > 0) {
+        partecipantiCount--;
+        counterEl.textContent = partecipantiCount;
+        alert("Hai annullato la tua partecipazione.");
+        formContainer.style.display = 'none';
+        partecipaBtn.disabled = false;
+      } else {
+        alert("Non ci sono iscritti da annullare.");
+      }
+    });
+
+    function updateTimer() {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      timerEl.textContent = `Tempo rimasto: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+      if (totalSeconds > 0) {
+        totalSeconds--;
+      } else {
+        clearInterval(timerInterval);
+        partecipaBtn.disabled = true;
+        alert("Tempo scaduto! Non è più possibile iscriversi.");
+        formContainer.style.display = 'none';
+      }
     }
-  });
 
-  form.addEventListener('submit', (e) => {
-  if (partecipantiCount >= maxPartecipanti) {
-    e.preventDefault();
-    alert("Il numero massimo di partecipanti è stato raggiunto!");
-    return;
-  }
-
-  partecipantiCount++;
-  localStorage.setItem('partecipantiCount', partecipantiCount);
-  counterEl.textContent = partecipantiCount;
-
-  // ✅ Non blocchiamo l'invio del form, così le mail partono e la pagina di ringraziamento si apre.
-});
-
-    alert("Iscrizione confermata!");
-    form.reset();
-  });
-
-  // Timer
-  let totalSeconds = 300;
-
-  function updateTimer() {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    timerEl.textContent = `Tempo rimasto: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-
-    if (totalSeconds > 0) {
-      totalSeconds--;
-    } else {
-      clearInterval(timerInterval);
-      partecipaBtn.disabled = true;
-      alert("Tempo scaduto! Non è più possibile iscriversi.");
-      formContainer.style.display = 'none';
-    }
-  }
-
-  const timerInterval = setInterval(updateTimer, 1000);
-  updateTimer();
-</script>
-
+    const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+  </script>
 
 </body>
 </html>
