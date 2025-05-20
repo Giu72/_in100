@@ -32,6 +32,7 @@
       border-radius: 5px;
       cursor: pointer;
       margin: 10px;
+      transition: background-color 0.3s;
     }
     button:hover {
       background-color: #e03d1a;
@@ -85,11 +86,11 @@
 </head>
 <body>
 
-  <img src="https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1280.jpg" alt="Pizza Margherita" />
+  <img src="https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1280.jpg" alt="Una pizza Margherita invitante" />
   <h1>Se siamo in 50 paghiamo solo 25€</h1>
 
-  <button id="partecipaBtn">Partecipa Ora</button>
-  <button id="annullaBtn">Annulla iscrizione</button>
+  <button id="partecipaBtn" aria-label="Partecipa all'offerta">Partecipa Ora</button>
+  <button id="annullaBtn" aria-label="Annulla la tua iscrizione">Annulla iscrizione</button>
 
   <div id="timer">Tempo rimasto: 05:00</div>
 
@@ -98,15 +99,15 @@
     Al momento siamo <span id="counter">0</span>
   </div>
 
-  <!-- Form nascosto all'inizio -->
+  <!-- Form inizialmente nascosto -->
   <div id="formContainer" style="display: none;">
-    <form action="https://formsubmit.co/giusepperomeo029@gmail.com" method="POST">
+    <form action="https://giu72.github.io/_in100/" method="POST">
       <input type="text" name="nome" placeholder="Il tuo nome" required>
       <input type="email" name="email" placeholder="La tua email" required>
 
-      <!-- Queste righe sono opzionali ma utili -->
+      <!-- Campi invisibili utili per redirect o no captcha -->
       <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="https://tuosito.it/grazie.html">
+      <input type="hidden" name="_next" value="https://giu72.github.io/_in100/">
 
       <button type="submit">Conferma</button>
     </form>
@@ -117,18 +118,25 @@
     const annullaBtn = document.getElementById('annullaBtn');
     const counterEl = document.getElementById('counter');
     const formContainer = document.getElementById('formContainer');
+    const timerEl = document.getElementById('timer');
 
     let partecipantiCount = 0;
     const maxPartecipanti = 50;
+    let totalSeconds = 300;
 
     partecipaBtn.addEventListener('click', () => {
       if (partecipantiCount >= maxPartecipanti) {
         alert("Il numero massimo di partecipanti è stato raggiunto!");
         return;
       }
+
       formContainer.style.display = 'block';
       partecipantiCount++;
       counterEl.textContent = partecipantiCount;
+
+      if (partecipantiCount >= maxPartecipanti) {
+        partecipaBtn.disabled = true;
+      }
     });
 
     annullaBtn.addEventListener('click', () => {
@@ -136,31 +144,29 @@
         partecipantiCount--;
         counterEl.textContent = partecipantiCount;
         alert("Hai annullato la tua partecipazione.");
-        partecipaBtn.disabled = false;
         formContainer.style.display = 'none';
+        partecipaBtn.disabled = false;
       } else {
         alert("Non ci sono iscritti da annullare.");
       }
     });
 
-    // Timer
-    let totalSeconds = 300;
-    const timerEl = document.getElementById('timer');
-
     function updateTimer() {
-      let minutes = Math.floor(totalSeconds / 60);
-      let seconds = totalSeconds % 60;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
       timerEl.textContent = `Tempo rimasto: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
       if (totalSeconds > 0) {
         totalSeconds--;
       } else {
         clearInterval(timerInterval);
         partecipaBtn.disabled = true;
         alert("Tempo scaduto! Non è più possibile iscriversi.");
+        formContainer.style.display = 'none';
       }
     }
 
-    let timerInterval = setInterval(updateTimer, 1000);
+    const timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
   </script>
 
