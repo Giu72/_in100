@@ -101,17 +101,15 @@
 
   <!-- Form inizialmente nascosto -->
   <div id="formContainer" style="display: none;">
-    <form action="https://formsubmit.co/giusepperomeo029@gmail.com" method="POST">
-  <input type="text" name="nome" placeholder="Il tuo nome" required>
-  <input type="email" name="email" placeholder="La tua email" required>
+    <form id="partecipazioneForm" action="https://formsubmit.co/giusepperomeo029@gmail.com" method="POST">
+      <input type="text" name="nome" placeholder="Il tuo nome" required>
+      <input type="email" name="email" placeholder="La tua email" required>
 
-  <!-- Campi invisibili utili per redirect o no captcha -->
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://giu72.github.io/_in100/grazie.html">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="https://giu72.github.io/_in100/grazie.html">
 
-  <button type="submit">Conferma</button>
-</form>
-
+      <button type="submit">Conferma</button>
+    </form>
   </div>
 
   <script>
@@ -120,10 +118,14 @@
     const counterEl = document.getElementById('counter');
     const formContainer = document.getElementById('formContainer');
     const timerEl = document.getElementById('timer');
+    const form = document.getElementById('partecipazioneForm');
 
-    let partecipantiCount = 0;
     const maxPartecipanti = 50;
     let totalSeconds = 300;
+
+    // Recupera il conteggio da localStorage o imposta a 0
+    let partecipantiCount = parseInt(localStorage.getItem('partecipantiCount')) || 0;
+    counterEl.textContent = partecipantiCount;
 
     partecipaBtn.addEventListener('click', () => {
       if (partecipantiCount >= maxPartecipanti) {
@@ -132,17 +134,12 @@
       }
 
       formContainer.style.display = 'block';
-      partecipantiCount++;
-      counterEl.textContent = partecipantiCount;
-
-      if (partecipantiCount >= maxPartecipanti) {
-        partecipaBtn.disabled = true;
-      }
     });
 
     annullaBtn.addEventListener('click', () => {
       if (partecipantiCount > 0) {
         partecipantiCount--;
+        localStorage.setItem('partecipantiCount', partecipantiCount);
         counterEl.textContent = partecipantiCount;
         alert("Hai annullato la tua partecipazione.");
         formContainer.style.display = 'none';
@@ -150,6 +147,13 @@
       } else {
         alert("Non ci sono iscritti da annullare.");
       }
+    });
+
+    // ✅ Incrementa il contatore solo al submit confermato
+    form.addEventListener('submit', () => {
+      partecipantiCount++;
+      localStorage.setItem('partecipantiCount', partecipantiCount);
+      counterEl.textContent = partecipantiCount;
     });
 
     function updateTimer() {
