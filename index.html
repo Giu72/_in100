@@ -153,18 +153,19 @@
   });
 
   form.addEventListener('submit', (e) => {
-    e.preventDefault(); // Previene l'invio del modulo per gestirlo manualmente
-    if (partecipantiCount >= maxPartecipanti) {
-      alert("Il numero massimo di partecipanti è stato raggiunto!");
-      return;
-    }
-    partecipantiCount++;
-    localStorage.setItem('partecipantiCount', partecipantiCount);
-    counterEl.textContent = partecipantiCount;
-    formContainer.style.display = 'none';
-    if (partecipantiCount >= maxPartecipanti) {
-      partecipaBtn.disabled = true;
-    }
+  if (partecipantiCount >= maxPartecipanti) {
+    e.preventDefault();
+    alert("Il numero massimo di partecipanti è stato raggiunto!");
+    return;
+  }
+
+  partecipantiCount++;
+  localStorage.setItem('partecipantiCount', partecipantiCount);
+  counterEl.textContent = partecipantiCount;
+
+  // ✅ Non blocchiamo l'invio del form, così le mail partono e la pagina di ringraziamento si apre.
+});
+
     alert("Iscrizione confermata!");
     form.reset();
   });
